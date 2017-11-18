@@ -8,9 +8,17 @@ import (
 	"encoding/csv"
 	"os"
 	"strconv"
+	"runtime"
+	"sync"
 )
 
 func main() {
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	var wg sync.WaitGroup
+
+	wg.Add(2)
 
 	trainingImgs, testImgs, trainLabels, testLabels := loadMNISTData()
 
@@ -23,45 +31,88 @@ func main() {
 
 	fmt.Println("Creating output CSV File...Done")
 
-	file, err := os.Create("data.csv")
+	file1, err := os.Create("data1.csv")
+	file2, err := os.Create("data2.csv")
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	writer := csv.NewWriter(file)
+	writer1 := csv.NewWriter(file1)
+	writer2 := csv.NewWriter(file2)
 
 	fmt.Println("Running Experiments...")
 
-	records := [][]string{}
+	records1 := [][]string{}
+	records2 := [][]string{}
 
-	for i := 59500; i < 60000; i += 100 {
-		for j := 1; j < 11; j++ {
-			fmt.Println(">[ Training Examples", i, "Hidden Layers", j, "]<")
-			time, accuracy, trainingError := runTestIteration(0.2, 0.4, j, 10, trainingExampleSet, testingExampleSet, i)
+	//First 30000
+	go func() {
+		defer wg.Done()
 
-			tmp := []string{}
+		for i := 0; i < 30000; i += 100 {
+			for j := 1; j < 11; j++ {
+				fmt.Println(">[ Training Examples", i, "Hidden Layers", j, "]<")
+				time, accuracy, trainingError := runTestIteration(0.2, 0.4, j, 10, trainingExampleSet, testingExampleSet, i)
 
-			tmp = append(tmp, IntToString(i))
-			tmp = append(tmp, IntToString(j))
-			tmp = append(tmp, FloatToString(accuracy))
-			tmp = append(tmp, Int64ToString(time))
+				tmp := []string{}
 
-			for _, n := range trainingError {
-				tmp = append(tmp, FloatToString(n))
+				tmp = append(tmp, IntToString(i))
+				tmp = append(tmp, IntToString(j))
+				tmp = append(tmp, FloatToString(accuracy))
+				tmp = append(tmp, Int64ToString(time))
+
+				for _, n := range trainingError {
+					tmp = append(tmp, FloatToString(n))
+				}
+
+				records1 = append(records1, tmp)
 			}
-
-			records = append(records, tmp)
+			writer1.WriteAll(records1)
+			records1 = [][]string{}
 		}
-		writer.WriteAll(records)
-		records = [][]string{}
-	}
 
-	writer.WriteAll(records)
+	}()
+
+	//Second 30000
+	go func() {
+		defer wg.Done()
+
+		for i := 300; i < 60000; i += 100 {
+			for j := 1; j < 11; j++ {
+				fmt.Println(">[ Training Examples", i, "Hidden Layers", j, "]<")
+				time, accuracy, trainingError := runTestIteration(0.2, 0.4, j, 10, trainingExampleSet, testingExampleSet, i)
+
+				tmp := []string{}
+
+				tmp = append(tmp, IntToString(i))
+				tmp = append(tmp, IntToString(j))
+				tmp = append(tmp, FloatToString(accuracy))
+				tmp = append(tmp, Int64ToString(time))
+
+				for _, n := range trainingError {
+					tmp = append(tmp, FloatToString(n))
+				}
+
+				records2 = append(records2, tmp)
+			}
+			writer2.WriteAll(records2)
+			records2 = [][]string{}
+		}
+
+	}()
+
+	wg.Wait()
+
+	writer1.WriteAll(records1)
+	writer2.WriteAll(records2)
 
 	fmt.Println("Done Experiments")
 
-	file.Close()
-	writer.Flush()
+	file1.Close()
+	writer1.Flush()
+
+	file2.Close()
+	writer2.Flush()
 
 }
 
