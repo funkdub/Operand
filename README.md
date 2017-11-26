@@ -4,14 +4,14 @@ Operand is a deep artificial neural network (ANN) library for Google's Go, used 
 
 
 
-##Installation
+## Installation
 ```
 go get github.com/MorganGallant/Operand
 ```
 
 Some IDE software may do this step for you (such as GoLand). This command will download the library locally into your project.
 
-##Usage
+## Usage
 
 First, import the library into your Go package.
 ```
@@ -50,7 +50,7 @@ output := network.ForwardPropagateInput(Input)
 The input is of type ```[]float64```, and it's size much match the size of the input layer of the network.
 The function will return a ```[]float64``` with size equal to the output layer of the network.
 
-##Activation Functions
+## Activation Functions
 
 As part of Operand, there are some activation functions to choose from.  For now, these are stored in the ```Operand.nn``` package, however it is my goal to expand this library to contain a math-heavy package with matrix and statistical operations supported.
 
@@ -74,7 +74,7 @@ Operand.nn.TanH(float64) float64
 Operand.nn.DTanH(float64) float64
 ```
 
-##Example
+## Example
 
 The following example will showcase the library in action, approximating the sin function between 0-1 with 99.98% accuracy using a four layer fully connected neural network. The learning rate and momentum factor was set to 0.2. 100 Epochs were completed during training.
 
@@ -88,11 +88,11 @@ network := Operand.nn.InitializeNewNetwork([]int{1, 10, 8, 1}, 0.2, 0.2, 100, Op
 
 //Generate the test and training data set, in this case, to have the network approximate the sin function.
 for i := 0; i < 10000; i++ {
-	valTrain := rand.Float64()
+    valTrain := rand.Float64()
     valTest := rand.Float64()
 
     examplesTrain = append(examplesTrain, Operand.nn.GenerateExample([]float64{valTrain}, []float64{math.Sin(valTrain)}))
-	examplesTest = append(examplesTest, Operand.nn.GenerateExample([]float64{valTest}, []float64{math.Sin(valTest)}))
+    examplesTest = append(examplesTest, Operand.nn.GenerateExample([]float64{valTest}, []float64{math.Sin(valTest)}))
 }
 
 //Train the network on the training set. You may turn debug off if needed.
