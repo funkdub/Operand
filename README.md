@@ -1,6 +1,6 @@
 # Operand
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/MorganGallant/Operand)]
+![Go Report Card](https://goreportcard.com/badge/github.com/MorganGallant/Operand)
 
 Operand is a deep artificial neural network (ANN) library for Google's Go, used to easily create deep feed-forward neural networks, with a dynamic hidden structure. The goal of the project is to simplify the creation of neural networks for numerical pattern recognition, for varying uses.
 
