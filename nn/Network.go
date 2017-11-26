@@ -164,7 +164,7 @@ func (n *ConnectedNetwork) TrainNetwork(examples []Example, debug bool) []float6
 		accuracy[i] = (1 - (e / float64(len(examples)))) * 100
 
 		if debug {
-			fmt.Println("Epoch", i, ". Accuracy Precentage Achieved:", accuracy[i])
+			fmt.Println("Epoch", i, ". Accuracy Percentage Achieved:", accuracy[i])
 		}
 	}
 	return accuracy
