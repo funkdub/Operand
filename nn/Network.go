@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-//Structure to hold network data
+//ConnectedNetwork: Structure to hold network data
 type ConnectedNetwork struct {
 	Structure []int
 	Weights [][][]float64
@@ -17,12 +17,13 @@ type ConnectedNetwork struct {
 	ActivationFunction, ActivationFunctionDerivative func(float64) float64
 }
 
-//Structure to format examples correctly for network training
+//Example: Structure to format examples correctly for network training
 type Example struct {
 	Input []float64
 	Output []float64
 }
 
+//CreateVector: Function to fill an array of size i with value fill
 func CreateVector(i int, fill float64) []float64 {
 	v := make([]float64, i)
 	for i := 0; i < i; i++ {
@@ -31,7 +32,7 @@ func CreateVector(i int, fill float64) []float64 {
 	return v
 }
 
-//Initialize a new fully connected network
+//InitializeNewNetwork: Initialize a new fully connected network
 func InitializeNewNetwork(structure []int, learningRate, momentumFactor float64, epochCount int, activationFunction, activationFunctionDerivative func(float64) float64) ConnectedNetwork{
 
 	rand.Seed(time.Now().UnixNano())
@@ -75,7 +76,7 @@ func InitializeNewNetwork(structure []int, learningRate, momentumFactor float64,
 	return n
 }
 
-//Calculate activation values for each neuron and return output layer outputs
+//ForwardPropagateInput: Calculate activation values for each neuron and return output layer outputs
 func (n *ConnectedNetwork) ForwardPropagateInput(in []float64) []float64 {
 
 	if len(in) != n.Structure[0] { panic("Invalid length of input relative to network input layer size during forward propagation.") }
@@ -102,6 +103,7 @@ func (n *ConnectedNetwork) ForwardPropagateInput(in []float64) []float64 {
 
 }
 
+//CalculateDeltas: A function to calculate the deltas of each neuron in the network.
 func (n *ConnectedNetwork) CalculateDeltas(example Example) {
 
 	if n.Structure[0] != len(example.Input) { panic("Input vector does not match size of network input layer.") }
@@ -127,12 +129,12 @@ func (n *ConnectedNetwork) CalculateDeltas(example Example) {
 	}
 }
 
-
+//BackPropagate: A function to update weights using back propagation algorithm
 func (n *ConnectedNetwork) BackPropagate(example Example) float64 {
 
 	n.CalculateDeltas(example)
 
-	for i := 1; i < len(n.Structure) - 1; i++ { //i-1 to ref weight index
+	for i := 1; i < len(n.Structure) - 1; i++ {
 		for j := 0; j < n.Structure[i]; j++ {
 			for k := 0; k < n.Structure[i+1]; k++ {
 				ch := n.Deltas[i][k] * n.Activations[i][j]
@@ -152,6 +154,7 @@ func (n *ConnectedNetwork) BackPropagate(example Example) float64 {
 
 }
 
+//TrainNetwork: A function to train the network on an example set
 func (n *ConnectedNetwork) TrainNetwork(examples []Example, debug bool) []float64 {
 
 	accuracy := make([]float64, n.EpochCount)
@@ -171,7 +174,7 @@ func (n *ConnectedNetwork) TrainNetwork(examples []Example, debug bool) []float6
 }
 
 
-
+//EvaluateNetwork: A function to evaluate a network on an example set
 func (n *ConnectedNetwork) EvaluateNetwork(examples []Example) float64 {
 
 	var err float64
