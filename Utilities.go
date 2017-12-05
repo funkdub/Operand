@@ -1,4 +1,4 @@
-package nn
+package Operand
 
 import "math"
 

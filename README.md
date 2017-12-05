@@ -25,7 +25,7 @@ import "github.com/MorganGallant/Operand"
 To create a new network, and specify parameters, use the ```InitializeNewNetwork``` function. It returns a network instance.
 
 ```
-network := Operand.nn.InitializeNewNetwork(Structure, Learning Rate, MomentumFactor, Epochs, Activation Func, Activation Func Derivative)
+network := Operand.InitializeNewNetwork(Structure, Learning Rate, MomentumFactor, Epochs, Activation Func, Activation Func Derivative)
 ```
 
 The structure of the network is typed as  ```[]int```. It must have at minimum 3 layers: 1 input, n hiddens, 1 output.
@@ -33,9 +33,9 @@ The learning rate and momentum factor are both type ```float64```, typically bet
 
 Example of Structure (MNIST with two hidden layers): ```[]int{784, 10, 8, 10}```.
 
-To train the network, you must first generate examples of type ```Operand.nn.Example```, which takes in two ```[]float64``` arrays, one for the input of the network, the other as the desired output. You can use the ```Operand.nn.GenerateExample (in, out []float64) Example``` function to assist in the creation of example sets.
+To train the network, you must first generate examples of type ```Operand.Example```, which takes in two ```[]float64``` arrays, one for the input of the network, the other as the desired output. You can use the ```Operand.GenerateExample (in, out []float64) Example``` function to assist in the creation of example sets.
 
-Once the example set is created, train the network using the ```network.TrainNetwork(Example Set, Debug Mode)```, where the example set is of type ```[]Operand.nn.Example``` and the debug mode is specified by a ```bool``` value. Ensure that the input/output size of the network matches the size of the example input and output.
+Once the example set is created, train the network using the ```network.TrainNetwork(Example Set, Debug Mode)```, where the example set is of type ```[]Operand.Example``` and the debug mode is specified by a ```bool``` value. Ensure that the input/output size of the network matches the size of the example input and output.
 
 To evaluate the network on a test/hold-out set, use the ```EvaluateNetwork``` function, which returns an accuracy percentage as a ```float64``` value.
 
@@ -43,7 +43,7 @@ To evaluate the network on a test/hold-out set, use the ```EvaluateNetwork``` fu
 accuracy := network.EvaluateNetwork(Example Set)
 ```
 
-The example set is of type ```[]Operand.nn.Example```.
+The example set is of type ```[]Operand.Example```.
 
 To forward propagate a ```[]float64``` through the network, and get the output ```[]float64```, use the ```ForwardPropagateInput``` function.
 
@@ -56,26 +56,26 @@ The function will return a ```[]float64``` with size equal to the output layer o
 
 ## Activation Functions
 
-As part of Operand, there are some activation functions to choose from.  For now, these are stored in the ```Operand.nn``` package, however it is my goal to expand this library to contain a math-heavy package with matrix and statistical operations supported.
+As part of Operand, there are some activation functions to choose from.  For now, these are stored in the ```Operand``` package, however it is my goal to expand this library to contain a math-heavy package with matrix and statistical operations supported.
 
 When creating a new network, you must specify which functions to use, or create your own.
 
 Sigmoid:
 ```
-Operand.nn.Sigmoid(float64) float64
-Operand.nn.DSigmoid(float64) float64
+Operand.Sigmoid(float64) float64
+Operand.DSigmoid(float64) float64
 ```
 
 ReLU:
 ```
-Operand.nn.Relu(float64) float64
-Operand.nn.DRelu(float64) float64
+Operand.Relu(float64) float64
+Operand.DRelu(float64) float64
 ```
 
 Hyperbolic Tangent:
 ```
-Operand.nn.TanH(float64) float64
-Operand.nn.DTanH(float64) float64
+Operand.TanH(float64) float64
+Operand.DTanH(float64) float64
 ```
 
 ## Example
@@ -85,18 +85,18 @@ The following example will showcase the library in action, approximating the sin
 Source Code:
 ```
 //Initialize new arrays to store example sets (train and test)
-var examplesTrain, examplesTest []Operand.nn.Example
+var examplesTrain, examplesTest []Operand.Example
 
 //Create the network, with input size of one and output size of one.
-network := Operand.nn.InitializeNewNetwork([]int{1, 10, 8, 1}, 0.2, 0.2, 100, Operand.nn.Sigmoid, Operand.nn.DSigmoid)
+network := Operand.InitializeNewNetwork([]int{1, 10, 8, 1}, 0.2, 0.2, 100, Operand.Sigmoid, Operand.DSigmoid)
 
 //Generate the test and training data set, in this case, to have the network approximate the sin function.
 for i := 0; i < 10000; i++ {
     valTrain := rand.Float64()
     valTest := rand.Float64()
 
-    examplesTrain = append(examplesTrain, Operand.nn.GenerateExample([]float64{valTrain}, []float64{math.Sin(valTrain)}))
-    examplesTest = append(examplesTest, Operand.nn.GenerateExample([]float64{valTest}, []float64{math.Sin(valTest)}))
+    examplesTrain = append(examplesTrain, Operand.GenerateExample([]float64{valTrain}, []float64{math.Sin(valTrain)}))
+    examplesTest = append(examplesTest, Operand.GenerateExample([]float64{valTest}, []float64{math.Sin(valTest)}))
 }
 
 //Train the network on the training set. You may turn debug off if needed.
