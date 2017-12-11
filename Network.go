@@ -169,13 +169,13 @@ func (n *ConnectedNetwork) TrainNetwork(examples []Example, debug bool) []float6
 
 	accuracy := make([]float64, n.EpochCount)
 
+
 	for i := 0; i < n.EpochCount; i++ {
 		var e float64
 		for _, example := range examples {
 			e += n.BackPropagate(example)
 		}
 		accuracy[i] = (1 - (e / float64(len(examples)))) * 100
-
 		if debug {
 			fmt.Println("Epoch", i, ". Accuracy Percentage Achieved:", accuracy[i])
 		}
